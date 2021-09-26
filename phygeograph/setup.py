@@ -12,7 +12,7 @@ import io
 with io.open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 kwargs = dict(
     name='phygeograph',
     version=__version__,
