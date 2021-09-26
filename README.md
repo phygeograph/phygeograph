@@ -5,6 +5,10 @@ Current version just supports the PyTorch package of deep geometric learning and
 will extend to the others in the future. This package is for the paper, 
 `"Physics-Aware Deep Graph Learning for Air Quality Assessment"` 
 
+Authors: Lianfa Li (phygeograph@gmail.com; lspatial@gmail.com)  
+         Jinfeng Wang (wangjf@lreis.ac.cn)
+
+
 ## Major modules
 
 **Model**
@@ -115,8 +119,8 @@ yn = scy.transform(y)
 tarcols=[i for i in range(len(covs))]
 trainsitesIndex=[i for i in range(datatar.shape[0])]
 trainsitesIndex, indTestsitesIndex=selectSites(datatar)
-x, edge_index,edge_dist, y, train_index, test_index = DataSamplingDSited(Xn[:,tarcols], yn, [0,1,2], 12,
-                        trainsitesIndex ,datatar)
+x, edge_index,edge_dist, y, train_index, test_index = DataSamplingDSited(Xn[:,tarcols], yn, 
+        [0,1,2], 12,trainsitesIndex ,datatar)
 x = x[:, 1:]
 edge_weight=1.0/(edge_dist+0.00001)
 neighbors=[12,12,12,12]
@@ -139,7 +143,8 @@ nout=1
 resnodes = [512, 320, 256, 128, 96, 64, 32, 16]
 # 0: original; 1: concated ; 2: dense; 3: only gcn
 gcnnhiddens = [128,64,32]
-model = PhyGeoGrapHPDE(x.shape[1], gcnnhiddens, nout, len(neighbors), resnodes, weightedmean=True,gcnout=nout,nattlayer=1)
+model = PhyGeoGrapHPDE(x.shape[1], gcnnhiddens, nout, len(neighbors), resnodes, 
+         weightedmean=True,gcnout=nout,nattlayer=1)
 model = model.to(device)
 x = x.to(device)
 edge_index = edge_index.to(device)
@@ -149,7 +154,6 @@ optimizer = torch.optim.Adam(model.parameters(), lr=init_lr)
 best_indtest_r2 = -9999
 best_test_r2=-9999
 scheduler=torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,mode='min')
-#scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.2, last_epoch=-1)
 oldlr=newlr=init_lr
 ```
 
@@ -163,7 +167,8 @@ while epoch< nepoch  :
     print('Conducting ',epoch, ' of ',nepoch,' for PM  ... ...')
     loss, train_r2, train_rmse = train(model, train_loader, device, optimizer, x, y,scy)
     try:
-       train_r2, train_rmse, test_r2, test_rmse,indtest_r2,indtest_rmse= test(model, x_loader, device, x, y, scy,train_index,
+       train_r2, train_rmse, test_r2, test_rmse,indtest_r2,indtest_rmse=
+                test(model, x_loader, device, x, y, scy,train_index,
                          test_index, False,indTestsitesIndex)
     except:
         print("Wrong loop for ecpoch "+str(epoch)+ ", continue ... ...")
@@ -179,7 +184,8 @@ while epoch< nepoch  :
         oldlr=newlr
     aperformanceDf=pd.DataFrame({'train_r2':train_r2, 'train_rmse':train_rmse,
                                  'test_r2':test_r2, 'test_rmse': test_rmse,
-                                 'indtest_r2':indtest_r2,'indtest_rmse':indtest_rmse},index=[epoch])
+                                 'indtest_r2':indtest_r2,'indtest_rmse':indtest_rmse},
+                                 index=[epoch])
     aperformanceDf['epoch']=epoch
     if epoch==0:
         alltrainHist=aperformanceDf
