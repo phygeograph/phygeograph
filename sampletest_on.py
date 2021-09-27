@@ -57,7 +57,7 @@ x, edge_index,edge_dist, y, train_index, test_index = DataSamplingDSited(Xn[:,ta
                         trainsitesIndex ,datatar)
 x = x[:, 1:]
 edge_weight=1.0/(edge_dist+0.00001)
-neighbors=[12,12,12]
+neighbors=[12,12,12,12]
 train_loader = WNeighborSampler(edge_index, edge_weight= edge_weight,node_idx=train_index,
                                sizes=neighbors, batch_size=2048, shuffle=True,
                                num_workers=20 )
